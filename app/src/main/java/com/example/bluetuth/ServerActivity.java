@@ -20,7 +20,6 @@ public class ServerActivity extends AppCompatActivity {
 
     TableLayout tableLayout;
     int currentRowIndex = -1;
-    Semaphore semaphore = new Semaphore(1);
 
     final Handler handler = new Handler() {
         @Override
@@ -75,8 +74,6 @@ public class ServerActivity extends AppCompatActivity {
                 try {
                     connectedSocket = mmServerSocket.accept();
 
-                    semaphore.acquire();
-
                     BluetoothDevice device = connectedSocket.getRemoteDevice();
                     String name = device.getName();
                     String address = device.getAddress();
@@ -84,10 +81,7 @@ public class ServerActivity extends AppCompatActivity {
                     Message message = handler.obtainMessage();
                     message.what = 0;
                     message.obj = name == null ? address : name;
-
                     handler.sendMessage(message);
-
-                    semaphore.release();
                 }
                 catch (Exception e) {
                     e.printStackTrace();
